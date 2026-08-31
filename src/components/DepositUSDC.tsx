@@ -121,6 +121,19 @@ export default function DepositUSDC() {
   const currentAllowance = allowanceRaw !== undefined ? allowanceRaw : BigInt(0);
   const needsApproval = currentAllowance < parsedAmount;
 
+  const isUnlimitedAllowance = currentAllowance > maxUint256 / BigInt(2);
+
+  const formattedCurrentAllowance = isUnlimitedAllowance
+    ? "Unlimited (MaxUint256)"
+    : `${Number(formatUnits(currentAllowance, dec)).toLocaleString(undefined, { maximumFractionDigits: 6 })} ${symbol?.toString() || "USDC"}`;
+
+  const calcRemainingAllowance =
+    currentAllowance >= parsedAmount ? currentAllowance - parsedAmount : BigInt(0);
+
+  const formattedRemainingAllowance = isUnlimitedAllowance
+    ? "Unlimited"
+    : `${Number(formatUnits(calcRemainingAllowance, dec)).toLocaleString(undefined, { maximumFractionDigits: 6 })} ${symbol?.toString() || "USDC"}`;
+
   // Handle Step 1: Approve Vault Contract (Exact vs Max Allowance)
   const handleApprove = (useMaxAllowance: boolean = false) => {
     if (!depositAmount && !useMaxAllowance) return;
@@ -260,19 +273,36 @@ export default function DepositUSDC() {
           />
         </div>
 
-        {/* Status Alert for Allowance */}
-        <div className="p-3 rounded-xl bg-slate-900/90 border border-white/10 text-xs flex items-center justify-between">
-          <span className="text-slate-400">Vault Allowance Status:</span>
-          {needsApproval ? (
-            <span className="text-amber-400 font-bold flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-              Step 1 Approval Required
-            </span>
-          ) : (
-            <span className="text-emerald-400 font-bold flex items-center gap-1">
-              ✓ Approved & Ready for Deposit
-            </span>
-          )}
+        {/* Status Alert & Allowance Details */}
+        <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 text-xs space-y-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-slate-400 font-medium">Vault Allowance Status:</span>
+            {needsApproval ? (
+              <span className="text-amber-400 font-bold flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                Step 1 Approval Required
+              </span>
+            ) : (
+              <span className="text-emerald-400 font-bold flex items-center gap-1">
+                ✓ Approved & Ready for Deposit
+              </span>
+            )}
+          </div>
+
+          <div className="pt-2 border-t border-white/5 grid grid-cols-2 gap-2 text-[11px]">
+            <div>
+              <span className="text-slate-400 block font-medium">Total Granted Allowance:</span>
+              <span className="font-mono font-bold text-amber-300 truncate block mt-0.5">
+                {formattedCurrentAllowance}
+              </span>
+            </div>
+            <div>
+              <span className="text-slate-400 block font-medium">Est. Remaining Allowance:</span>
+              <span className="font-mono font-bold text-indigo-300 truncate block mt-0.5">
+                {formattedRemainingAllowance}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Step 1: Approve Buttons (Exact Amount or Unlimited Max Allowance) */}
