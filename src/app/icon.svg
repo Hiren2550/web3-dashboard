@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="ethGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Rounded Box Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="504" height="504" x="4" y="4" rx="124" fill="none" stroke="url(#accentGrad)" stroke-width="8" opacity="0.6" />
+  
+  <!-- Glowing Web3 Diamond Icon -->
+  <g transform="translate(256, 256) scale(0.9)" filter="url(#glow)">
+    <polygon points="0,-160 140,-40 0,60 -140,-40" fill="url(#ethGrad)" opacity="0.9" />
+    <polygon points="0,60 140,-40 0,170" fill="url(#accentGrad)" opacity="0.8" />
+    <polygon points="0,60 -140,-40 0,170" fill="url(#accentGrad)" opacity="0.6" />
+    <polygon points="0,-160 0,60 140,-40" fill="#ffffff" opacity="0.25" />
+    <polygon points="0,60 0,170 140,-40" fill="#ffffff" opacity="0.15" />
+  </g>
+</svg>
