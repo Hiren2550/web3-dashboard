@@ -238,6 +238,40 @@ export default function DepositUSDC() {
             <span className="text-sm font-bold text-purple-400">{symbol?.toString() || "USDC"}</span>
           </div>
         </div>
+
+        {/* Current Granted Allowance Card */}
+        <div className="bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-900 p-4 rounded-2xl border border-amber-500/30">
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-[11px] text-amber-300 font-bold uppercase tracking-wider">
+              Allowance
+            </span>
+            <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono">
+              allowance()
+            </span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-lg font-extrabold text-white font-mono truncate">
+              {formattedCurrentAllowance}
+            </span>
+          </div>
+        </div>
+
+        {/* Estimated Remaining Allowance Card */}
+        <div className="bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 p-4 rounded-2xl border border-indigo-500/30">
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-[11px] text-indigo-300 font-bold uppercase tracking-wider">
+              Remaining Allowance
+            </span>
+            <span className="text-[9px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded font-mono">
+              After Deposit
+            </span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-lg font-extrabold text-white font-mono truncate">
+              {formattedRemainingAllowance}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Form & 2-Step Deposit Buttons */}
