@@ -12,7 +12,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { erc20Abi } from "@/contracts/erc20Abi";
 import { TOKEN_CONTRACT_ADDRESS, DEFAULT_RECEIVER_ADDRESS } from "@/config/constants";
 
-export default function ApproveToken() {
+interface ApproveTokenProps {
+  isModal?: boolean;
+}
+
+export default function ApproveToken({ isModal = false }: ApproveTokenProps) {
   const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
 
@@ -83,21 +87,24 @@ export default function ApproveToken() {
     });
   };
 
-  return (
-    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full border border-indigo-500/20 shadow-2xl relative overflow-hidden">
-      <div className="flex items-center justify-between pb-6 border-b border-white/10">
-        <div>
-          <span className="text-xs uppercase font-bold tracking-wider text-indigo-400">
-            Write Smart Contract
-          </span>
-          <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
-            Approve Spender Allowance
-          </h2>
+  const content = (
+    <>
+      {!isModal && (
+        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
+          <div>
+            <span className="text-xs uppercase font-bold tracking-wider text-indigo-400">
+              Write Smart Contract
+            </span>
+            <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
+              Approve Spender Allowance
+            </h2>
+          </div>
+          <div className="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-semibold border border-indigo-500/20">
+            `approve()` Function
+          </div>
         </div>
-        <div className="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-semibold border border-indigo-500/20">
-          `approve()` Function
-        </div>
-      </div>
+      )}
+
 
       <form onSubmit={handleApprove} className="space-y-4 mt-6">
         <div>
@@ -211,19 +218,17 @@ export default function ApproveToken() {
         </div>
       )}
 
-      {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
-          <span>Approve Error: {error?.message}</span>
-          <button
-            type="button"
-            onClick={handleClearError}
-            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
-            title="Dismiss error"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+    </>
+  );
+
+  if (isModal) {
+    return <div className="w-full space-y-4">{content}</div>;
+  }
+
+  return (
+    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full border border-indigo-500/20 shadow-2xl relative overflow-hidden">
+      {content}
     </div>
   );
 }
+

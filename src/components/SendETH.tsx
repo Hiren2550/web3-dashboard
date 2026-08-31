@@ -10,7 +10,11 @@ import {
 } from "wagmi";
 import { DEFAULT_RECEIVER_ADDRESS } from "@/config/constants";
 
-export default function SendETH() {
+interface SendETHProps {
+  isModal?: boolean;
+}
+
+export default function SendETH({ isModal = false }: SendETHProps) {
   const { address, isConnected } = useAccount();
   const { data: ethBalance } = useBalance({ address });
   const [recipient, setRecipient] = useState("");
@@ -59,29 +63,32 @@ export default function SendETH() {
     });
   };
 
-  return (
-    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full max-w-xl border border-sky-500/20 shadow-2xl relative overflow-hidden">
-      <div className="flex items-center justify-between pb-6 border-b border-white/10">
-        <div>
-          <span className="text-xs uppercase font-bold tracking-wider text-sky-400">
-            ETH Transfer
-          </span>
-          <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
-            Send Native ETH
-          </h2>
+  const content = (
+    <>
+      {!isModal && (
+        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
+          <div>
+            <span className="text-xs uppercase font-bold tracking-wider text-sky-400">
+              ETH Transfer
+            </span>
+            <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
+              Send Native ETH
+            </h2>
+          </div>
+          <div className="px-3 py-1 rounded-full bg-sky-500/10 text-sky-300 text-xs font-semibold border border-sky-500/20">
+            Native Currency
+          </div>
         </div>
-        <div className="px-3 py-1 rounded-full bg-sky-500/10 text-sky-300 text-xs font-semibold border border-sky-500/20">
-          Native Currency
-        </div>
-      </div>
+      )}
 
       {/* Balance Summary */}
-      <div className="my-6 p-4 rounded-2xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+      <div className="mb-6 p-4 rounded-2xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
         <span className="text-xs text-slate-400 font-medium">Available Balance</span>
         <span className="text-sm font-bold text-white font-mono">
           {ethBalance ? `${Number(ethBalance.formatted).toFixed(4)} ${ethBalance.symbol}` : "Loading..."}
         </span>
       </div>
+
 
       <form onSubmit={handleSend} className="space-y-4">
         <div>
@@ -194,19 +201,17 @@ export default function SendETH() {
         </div>
       )}
 
-      {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
-          <span>Transaction Failed: {error?.message}</span>
-          <button
-            type="button"
-            onClick={handleClearError}
-            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
-            title="Dismiss error"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+    </>
+  );
+
+  if (isModal) {
+    return <div className="w-full space-y-4">{content}</div>;
+  }
+
+  return (
+    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full max-w-xl border border-sky-500/20 shadow-2xl relative overflow-hidden">
+      {content}
     </div>
   );
 }
+

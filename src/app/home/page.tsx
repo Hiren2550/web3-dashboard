@@ -293,7 +293,7 @@ export default function HomePage() {
         onClose={() => setActiveModal(null)}
         title="Quick Send Native ETH"
       >
-        <SendETH />
+        <SendETH isModal />
       </Modal>
 
       <Modal
@@ -301,7 +301,7 @@ export default function HomePage() {
         onClose={() => setActiveModal(null)}
         title="Quick Transfer USDC Token"
       >
-        <TransferToken />
+        <TransferToken isModal />
       </Modal>
 
       <Modal
@@ -309,7 +309,7 @@ export default function HomePage() {
         onClose={() => setActiveModal(null)}
         title="Approve Spender Allowance"
       >
-        <ApproveToken />
+        <ApproveToken isModal />
       </Modal>
 
       <Modal
@@ -317,7 +317,7 @@ export default function HomePage() {
         onClose={() => setActiveModal(null)}
         title="Execute transferFrom (Spender Action)"
       >
-        <TransferFromToken />
+        <TransferFromToken isModal />
       </Modal>
 
       <Modal
@@ -325,8 +325,9 @@ export default function HomePage() {
         onClose={() => setActiveModal(null)}
         title="Deposit USDC into Vault Contract"
       >
-        <DepositUSDC />
+        <DepositUSDC isModal />
       </Modal>
+
 
       {/* Footer */}
       <footer className="border-t border-white/5 py-6 text-center text-xs text-slate-500 relative z-10 mt-12">

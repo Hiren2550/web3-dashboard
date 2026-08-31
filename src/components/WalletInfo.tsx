@@ -153,8 +153,9 @@ export default function WalletInfo() {
         onClose={() => setIsSendModalOpen(false)}
         title="Send Native ETH Transaction"
       >
-        <SendETH />
+        <SendETH isModal />
       </Modal>
+
     </>
   );
 }

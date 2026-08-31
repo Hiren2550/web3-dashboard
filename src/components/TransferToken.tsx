@@ -12,7 +12,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { erc20Abi } from "@/contracts/erc20Abi";
 import { TOKEN_CONTRACT_ADDRESS, DEFAULT_RECEIVER_ADDRESS } from "@/config/constants";
 
-export default function TransferToken() {
+interface TransferTokenProps {
+  isModal?: boolean;
+}
+
+export default function TransferToken({ isModal = false }: TransferTokenProps) {
   const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
 
@@ -76,34 +80,37 @@ export default function TransferToken() {
     queryClient.invalidateQueries();
   };
 
-  return (
-    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full border border-purple-500/20 shadow-2xl relative overflow-hidden">
-      <div className="flex items-center justify-between pb-6 border-b border-white/10">
-        <div>
-          <span className="text-xs uppercase font-bold tracking-wider text-purple-400">
-            Write Smart Contract
-          </span>
-          <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
-            Transfer Token (USDC)
-          </h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleManualRefresh}
-            className="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-white/10 transition-colors cursor-pointer flex items-center gap-1"
-            title="Force refresh all contract queries"
-          >
-            <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Sync Balance
-          </button>
-          <div className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-semibold border border-purple-500/20">
-            `transfer()`
+  const content = (
+    <>
+      {!isModal && (
+        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
+          <div>
+            <span className="text-xs uppercase font-bold tracking-wider text-purple-400">
+              Write Smart Contract
+            </span>
+            <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
+              Transfer Token (USDC)
+            </h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleManualRefresh}
+              className="px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-white/10 transition-colors cursor-pointer flex items-center gap-1"
+              title="Force refresh all contract queries"
+            >
+              <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Sync Balance
+            </button>
+            <div className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-semibold border border-purple-500/20">
+              `transfer()`
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
 
       <form onSubmit={handleTransfer} className="space-y-4 mt-6">
         <div>
@@ -207,19 +214,17 @@ export default function TransferToken() {
         </div>
       )}
 
-      {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
-          <span>Smart Contract Error: {error?.message}</span>
-          <button
-            type="button"
-            onClick={handleClearError}
-            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
-            title="Dismiss error"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+    </>
+  );
+
+  if (isModal) {
+    return <div className="w-full space-y-4">{content}</div>;
+  }
+
+  return (
+    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full border border-purple-500/20 shadow-2xl relative overflow-hidden">
+      {content}
     </div>
   );
 }
+

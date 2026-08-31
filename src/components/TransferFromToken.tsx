@@ -12,7 +12,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { erc20Abi } from "@/contracts/erc20Abi";
 import { TOKEN_CONTRACT_ADDRESS, DEFAULT_RECEIVER_ADDRESS } from "@/config/constants";
 
-export default function TransferFromToken() {
+interface TransferFromTokenProps {
+  isModal?: boolean;
+}
+
+export default function TransferFromToken({ isModal = false }: TransferFromTokenProps) {
   const { address, isConnected } = useAccount();
   const queryClient = useQueryClient();
 
@@ -96,21 +100,24 @@ export default function TransferFromToken() {
     });
   };
 
-  return (
-    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full border border-pink-500/20 shadow-2xl relative overflow-hidden">
-      <div className="flex items-center justify-between pb-6 border-b border-white/10">
-        <div>
-          <span className="text-xs uppercase font-bold tracking-wider text-pink-400">
-            Write Smart Contract (Spender Action)
-          </span>
-          <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
-            Execute `transferFrom()`
-          </h2>
+  const content = (
+    <>
+      {!isModal && (
+        <div className="flex items-center justify-between pb-6 border-b border-white/10 mb-6">
+          <div>
+            <span className="text-xs uppercase font-bold tracking-wider text-pink-400">
+              Write Smart Contract (Spender Action)
+            </span>
+            <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">
+              Execute `transferFrom()`
+            </h2>
+          </div>
+          <div className="px-3 py-1 rounded-full bg-pink-500/10 text-pink-300 text-xs font-semibold border border-pink-500/20">
+            Spender Transfer
+          </div>
         </div>
-        <div className="px-3 py-1 rounded-full bg-pink-500/10 text-pink-300 text-xs font-semibold border border-pink-500/20">
-          Spender Transfer
-        </div>
-      </div>
+      )}
+
 
       <form onSubmit={handleTransferFrom} className="space-y-4 mt-6">
         <div>
@@ -217,19 +224,17 @@ export default function TransferFromToken() {
         </div>
       )}
 
-      {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
-          <span>transferFrom Error: {error?.message}</span>
-          <button
-            type="button"
-            onClick={handleClearError}
-            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
-            title="Dismiss error"
-          >
-            ✕
-          </button>
-        </div>
-      )}
+    </>
+  );
+
+  if (isModal) {
+    return <div className="w-full space-y-4">{content}</div>;
+  }
+
+  return (
+    <div className="glass-card rounded-3xl p-6 sm:p-8 w-full border border-pink-500/20 shadow-2xl relative overflow-hidden">
+      {content}
     </div>
   );
 }
+
