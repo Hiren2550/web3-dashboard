@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { formatUnits, parseUnits } from "viem";
+import { formatUnits, parseUnits, maxUint256 } from "viem";
 import {
   useAccount,
   useReadContract,
@@ -121,14 +121,16 @@ export default function DepositUSDC() {
   const currentAllowance = allowanceRaw !== undefined ? allowanceRaw : BigInt(0);
   const needsApproval = currentAllowance < parsedAmount;
 
-  // Handle Step 1: Approve Vault Contract
-  const handleApprove = () => {
-    if (!depositAmount) return;
+  // Handle Step 1: Approve Vault Contract (Exact vs Max Allowance)
+  const handleApprove = (useMaxAllowance: boolean = false) => {
+    if (!depositAmount && !useMaxAllowance) return;
+    const amountToApprove = useMaxAllowance ? maxUint256 : parsedAmount;
+
     writeApprove({
       address: usdcTokenAddr,
       abi: erc20Abi,
       functionName: "approve",
-      args: [depositContractAddr, parsedAmount],
+      args: [depositContractAddr, amountToApprove],
     });
   };
 
@@ -273,20 +275,30 @@ export default function DepositUSDC() {
           )}
         </div>
 
-        {/* Step 1: Approve Button */}
+        {/* Step 1: Approve Buttons (Exact Amount or Unlimited Max Allowance) */}
         {needsApproval ? (
-          <button
-            type="button"
-            onClick={handleApprove}
-            disabled={isApprovePending || isApproveConfirming || !depositAmount}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
-          >
-            {isApprovePending
-              ? "Confirm Approval in Wallet..."
-              : isApproveConfirming
-              ? "Executing Approval on Chain..."
-              : `Step 1: Approve Vault to spend ${depositAmount} USDC`}
-          </button>
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={() => handleApprove(false)}
+              disabled={isApprovePending || isApproveConfirming || !depositAmount}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {isApprovePending
+                ? "Confirm Approval in Wallet..."
+                : isApproveConfirming
+                ? "Executing Approval on Chain..."
+                : `Step 1: Approve Exact ${depositAmount} USDC`}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleApprove(true)}
+              disabled={isApprovePending || isApproveConfirming}
+              className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 font-semibold text-xs border border-amber-500/30 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5"
+            >
+              <span>⚡</span> Approve Unlimited Max Allowance (Skip Step 1 for Future Deposits)
+            </button>
+          </div>
         ) : (
           /* Step 2: Deposit Button */
           <button
