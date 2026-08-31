@@ -48,7 +48,12 @@ export default function TransferFromToken() {
     isPending,
     isError,
     error,
+    reset,
   } = useWriteContract();
+
+  const handleClearError = () => {
+    if (isError) reset();
+  };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -117,7 +122,12 @@ export default function TransferFromToken() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-pink-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="0x... (Owner address)"
             value={fromAddress}
-            onChange={(e) => setFromAddress(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setFromAddress(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -141,7 +151,12 @@ export default function TransferFromToken() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-pink-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="0x... (Recipient address)"
             value={toAddress}
-            onChange={(e) => setToAddress(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setToAddress(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -157,7 +172,12 @@ export default function TransferFromToken() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-pink-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="1.0"
             value={tokenAmount}
-            onChange={(e) => setTokenAmount(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setTokenAmount(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -198,8 +218,16 @@ export default function TransferFromToken() {
       )}
 
       {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400">
-          transferFrom Error: {error?.message}
+        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
+          <span>transferFrom Error: {error?.message}</span>
+          <button
+            type="button"
+            onClick={handleClearError}
+            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
+            title="Dismiss error"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

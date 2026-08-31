@@ -40,7 +40,12 @@ export default function ApproveToken() {
     isPending,
     isError,
     error,
+    reset,
   } = useWriteContract();
+
+  const handleClearError = () => {
+    if (isError) reset();
+  };
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -104,7 +109,12 @@ export default function ApproveToken() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="0x..."
             value={spender}
-            onChange={(e) => setSpender(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setSpender(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -122,6 +132,7 @@ export default function ApproveToken() {
                   onClick={() => {
                     setIsUnlimited(false);
                     setAmount(val);
+                    handleClearError();
                   }}
                   className={`px-2 py-0.5 rounded text-[10px] cursor-pointer ${
                     !isUnlimited && amount === val
@@ -134,7 +145,10 @@ export default function ApproveToken() {
               ))}
               <button
                 type="button"
-                onClick={() => setIsUnlimited(!isUnlimited)}
+                onClick={() => {
+                  setIsUnlimited(!isUnlimited);
+                  handleClearError();
+                }}
                 className={`px-2 py-0.5 rounded text-[10px] cursor-pointer ${
                   isUnlimited
                     ? "bg-purple-600 text-white font-bold"
@@ -152,7 +166,12 @@ export default function ApproveToken() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono disabled:opacity-50"
             placeholder={isUnlimited ? "Unlimited (2^256 - 1)" : "100"}
             value={isUnlimited ? "Unlimited Allowance (Max uint256)" : amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              handleClearError();
+            }}
             required={!isUnlimited}
           />
         </div>
@@ -193,8 +212,16 @@ export default function ApproveToken() {
       )}
 
       {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400">
-          Approve Error: {error?.message}
+        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
+          <span>Approve Error: {error?.message}</span>
+          <button
+            type="button"
+            onClick={handleClearError}
+            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
+            title="Dismiss error"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

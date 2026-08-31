@@ -22,7 +22,12 @@ export default function SendETH() {
     isPending,
     isError,
     error,
+    reset,
   } = useSendTransaction();
+
+  const handleClearError = () => {
+    if (isError) reset();
+  };
 
   const {
     data: receipt,
@@ -88,7 +93,12 @@ export default function SendETH() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-sky-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="0x..."
             value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setRecipient(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -103,8 +113,11 @@ export default function SendETH() {
                 <button
                   type="button"
                   key={val}
-                  onClick={() => setAmount(val)}
-                  className="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300"
+                  onClick={() => {
+                    setAmount(val);
+                    handleClearError();
+                  }}
+                  className="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
                 >
                   {val}
                 </button>
@@ -118,7 +131,12 @@ export default function SendETH() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-sky-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="0.001"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -177,8 +195,16 @@ export default function SendETH() {
       )}
 
       {isError && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400">
-          Transaction Failed: {error?.message}
+        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
+          <span>Transaction Failed: {error?.message}</span>
+          <button
+            type="button"
+            onClick={handleClearError}
+            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
+            title="Dismiss error"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

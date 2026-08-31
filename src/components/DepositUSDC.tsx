@@ -74,6 +74,7 @@ export default function DepositUSDC() {
     isPending: isApprovePending,
     isError: isApproveError,
     error: approveError,
+    reset: resetApprove,
   } = useWriteContract();
 
   const {
@@ -82,7 +83,14 @@ export default function DepositUSDC() {
     isPending: isDepositPending,
     isError: isDepositError,
     error: depositError,
+    reset: resetDeposit,
   } = useWriteContract();
+
+  // Helper to clear error when user interacts with input
+  const handleClearError = () => {
+    if (isApproveError) resetApprove();
+    if (isDepositError) resetDeposit();
+  };
 
   // Transaction confirmations
   const { isLoading: isApproveConfirming, isSuccess: isApproveConfirmed } =
@@ -286,7 +294,10 @@ export default function DepositUSDC() {
                 <button
                   type="button"
                   key={val}
-                  onClick={() => setDepositAmount(val)}
+                  onClick={() => {
+                    setDepositAmount(val);
+                    handleClearError();
+                  }}
                   className="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
                 >
                   {val} {symbol?.toString() || "USDC"}
@@ -302,7 +313,12 @@ export default function DepositUSDC() {
             className="w-full bg-slate-950/80 border border-slate-700/80 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors font-mono"
             placeholder="5.0"
             value={depositAmount}
-            onChange={(e) => setDepositAmount(e.target.value)}
+            onFocus={handleClearError}
+            onClick={handleClearError}
+            onChange={(e) => {
+              setDepositAmount(e.target.value);
+              handleClearError();
+            }}
             required
           />
         </div>
@@ -407,8 +423,16 @@ export default function DepositUSDC() {
 
       {/* Errors */}
       {(isApproveError || isDepositError) && (
-        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400">
-          Transaction Error: {approveError?.message || depositError?.message}
+        <div className="mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center justify-between">
+          <span>Transaction Error: {approveError?.message || depositError?.message}</span>
+          <button
+            type="button"
+            onClick={handleClearError}
+            className="text-red-400 hover:text-white font-bold ml-2 cursor-pointer"
+            title="Dismiss error"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>
