@@ -91,12 +91,12 @@ export default function DepositUSDC() {
   const { isLoading: isDepositConfirming, isSuccess: isDepositConfirmed } =
     useWaitForTransactionReceipt({ hash: depositHash });
 
-  // Invalidate & refresh all queries on transaction confirmation
+  // Invalidate & refresh all queries on transaction confirmation or wallet account switch
   useEffect(() => {
-    if (isApproveConfirmed || isDepositConfirmed) {
+    if (isApproveConfirmed || isDepositConfirmed || address) {
       queryClient.invalidateQueries();
     }
-  }, [isApproveConfirmed, isDepositConfirmed, queryClient]);
+  }, [isApproveConfirmed, isDepositConfirmed, address, queryClient]);
 
   if (!isConnected) {
     return (
